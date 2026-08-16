@@ -29,37 +29,23 @@
 
 ### 2. 安装字体
 
-主字体是 [Ioskeley Mono](https://github.com/ahatem/IoskeleyMono)，中文回退是 [Maple Mono NF CN](https://github.com/subframe7536/maple-font)。Ghostty 里箭头/盒线不对时，把 `IoskeleyMono.zip` 换成 `IoskeleyMono-Term.zip`。
+主字体是 [Ioskeley Mono](https://github.com/ahatem/IoskeleyMono)，中文回退是 [Maple Mono NF CN](https://github.com/subframe7536/maple-font)。两边都有包，不用自己 curl。
 
-**macOS：**
-
-```bash
-# Ioskeley Mono → ~/Library/Fonts
-curl -fL -o /tmp/IoskeleyMono.zip \
-  https://github.com/ahatem/IoskeleyMono/releases/latest/download/IoskeleyMono.zip
-unzip -o /tmp/IoskeleyMono.zip -d /tmp/IoskeleyMono
-cp /tmp/IoskeleyMono/*.ttf ~/Library/Fonts/
-
-# 中文回退
-brew install --cask font-maple-mono-nf-cn
-```
-
-**Omarchy：** 也可以之后用 `omarchy font set "Ioskeley Mono"`（它会 `sed` 本仓库 `config` 里的 `font-family` 行）。
+**macOS（Homebrew）：**
 
 ```bash
-mkdir -p ~/.local/share/fonts
-
-curl -fL -o /tmp/IoskeleyMono.zip \
-  https://github.com/ahatem/IoskeleyMono/releases/latest/download/IoskeleyMono.zip
-unzip -o /tmp/IoskeleyMono.zip -d ~/.local/share/fonts/IoskeleyMono
-
-curl -fL -o /tmp/MapleMono-NF-CN.zip \
-  https://github.com/subframe7536/maple-font/releases/latest/download/MapleMono-NF-CN.zip
-unzip -o /tmp/MapleMono-NF-CN.zip -d ~/.local/share/fonts/MapleMonoNF-CN
-
-fc-cache -fv
-fc-list | grep -iE 'ioskeley|maple'
+brew install --cask font-ioskeley-mono font-maple-mono-nf-cn
 ```
+
+**Omarchy：** 官方 extra 里没有这两款，AUR 有。菜单 **Install → Package** 搜包名，或：
+
+```bash
+omarchy-pkg-add ttf-ioskeley-mono maple-mono-nf-cn
+```
+
+HiDPI 更建议 unhinted：`ttf-ioskeley-mono-unhinted`、`maple-mono-nf-cn-unhinted`。装完可用 `omarchy font set "Ioskeley Mono"`（它会 `sed` 本仓库 `config` 里的 `font-family` 行）。
+
+Omarchy 自带的 **Install → Style → Font** 只有 Cascadia / Meslo / Fira / Victor / Iosevka，没有 Ioskeley。
 
 ### 3. 部署配置
 
