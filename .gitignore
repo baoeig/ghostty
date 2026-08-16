@@ -1,0 +1,4 @@
+*.bak
+*.showcase.bak
+.DS_Store
+config.showcase.bak
