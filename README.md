@@ -29,20 +29,36 @@
 
 ### 2. 安装字体
 
-**macOS：** 从 [IoskeleyMono Releases](https://github.com/ahatem/IoskeleyMono/releases) 下载 `IoskeleyMono.zip`，双击装进「字体册」。中文回退：
+主字体是 [Ioskeley Mono](https://github.com/ahatem/IoskeleyMono)，中文回退是 [Maple Mono NF CN](https://github.com/subframe7536/maple-font)。Ghostty 里箭头/盒线不对时，把 `IoskeleyMono.zip` 换成 `IoskeleyMono-Term.zip`。
+
+**macOS：**
 
 ```bash
+# Ioskeley Mono → ~/Library/Fonts
+curl -fL -o /tmp/IoskeleyMono.zip \
+  https://github.com/ahatem/IoskeleyMono/releases/latest/download/IoskeleyMono.zip
+unzip -o /tmp/IoskeleyMono.zip -d /tmp/IoskeleyMono
+cp /tmp/IoskeleyMono/*.ttf ~/Library/Fonts/
+
+# 中文回退
 brew install --cask font-maple-mono-nf-cn
 ```
 
-**Omarchy：** 同样下载 zip，装到用户字体目录后刷新缓存。也可以之后用 `omarchy font set "Ioskeley Mono"`（它会 `sed` 本仓库 `config` 里的 `font-family` 行）。
+**Omarchy：** 也可以之后用 `omarchy font set "Ioskeley Mono"`（它会 `sed` 本仓库 `config` 里的 `font-family` 行）。
 
 ```bash
 mkdir -p ~/.local/share/fonts
-unzip IoskeleyMono.zip -d ~/.local/share/fonts/IoskeleyMono
-# 可选中文回退：https://github.com/subframe7536/maple-font/releases
+
+curl -fL -o /tmp/IoskeleyMono.zip \
+  https://github.com/ahatem/IoskeleyMono/releases/latest/download/IoskeleyMono.zip
+unzip -o /tmp/IoskeleyMono.zip -d ~/.local/share/fonts/IoskeleyMono
+
+curl -fL -o /tmp/MapleMono-NF-CN.zip \
+  https://github.com/subframe7536/maple-font/releases/latest/download/MapleMono-NF-CN.zip
+unzip -o /tmp/MapleMono-NF-CN.zip -d ~/.local/share/fonts/MapleMonoNF-CN
+
 fc-cache -fv
-fc-list | grep -i ioskeley
+fc-list | grep -iE 'ioskeley|maple'
 ```
 
 ### 3. 部署配置
