@@ -1,6 +1,7 @@
-# Shared Ghostty config (macOS + Linux).
-# Reload: Cmd+Shift+, (macOS) / Ctrl+Shift+, (Linux), or Cmd+R on this Mac.
-# Linux: `ln -sf linux.conf local.conf` so Super+S/R/I don't fight the compositor.
+# Shared Ghostty config (macOS + Omarchy/Hyprland).
+# Reload: Cmd+R / Cmd+Shift+, (macOS). On Omarchy: Ctrl+Shift+, or
+# `omarchy-restart-terminal` (SIGUSR2).
+# Omarchy: `ln -sf omarchy.conf local.conf` — Super+S is the scratchpad.
 
 config-file = ghostty-theme
 # Optional per-machine / per-OS overrides. Not committed (see linux.conf).

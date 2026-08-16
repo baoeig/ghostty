@@ -2,7 +2,7 @@
 
 深色半透明主题 + Bloom 辉光 + 光标拖影。当前字体是 [Ioskeley Mono](https://github.com/ahatem/IoskeleyMono)（Iosevka × Berkeley），缺字时回退到 Maple Mono NF CN。
 
-同一份 `config` 在 macOS 和 Linux 上都能用。不设置 `command`，启动哪个 shell 由 `$SHELL` / 系统用户项决定。
+同一份 `config` 在 macOS 和 [Omarchy](https://omarchy.org)（Arch + Hyprland）上都能用。不设置 `command`，启动哪个 shell 由 `$SHELL` / 系统用户项决定。
 
 ![Ghostty 终端截图](screen.png)
 
@@ -23,7 +23,9 @@
 
 ### 1. 安装 Ghostty
 
-从 [ghostty.org](https://ghostty.org/) 下载。Linux 也可以用发行版包装（Arch `ghostty`、Fedora copr 等），GTK4 构建即可。
+**macOS：** 从 [ghostty.org](https://ghostty.org/) 下载。
+
+**Omarchy：** 不要自己 `pacman -S ghostty` 完事。用菜单 **Install → Terminal → Ghostty**（或 `omarchy-install-terminal ghostty`），这样会装包装、写 `xdg-terminals.list`，`Super+Return` 才会开到 Ghostty。已经装过的话，**Setup → Defaults → Terminal** 切过去。
 
 ### 2. 安装字体
 
@@ -33,13 +35,12 @@
 brew install --cask font-maple-mono-nf-cn
 ```
 
-**Linux：** 同样下载 zip，装到用户字体目录后刷新缓存：
+**Omarchy：** 同样下载 zip，装到用户字体目录后刷新缓存。也可以之后用 `omarchy font set "Ioskeley Mono"`（它会 `sed` 本仓库 `config` 里的 `font-family` 行）。
 
 ```bash
 mkdir -p ~/.local/share/fonts
 unzip IoskeleyMono.zip -d ~/.local/share/fonts/IoskeleyMono
-# 可选中文回退
-# 从 https://github.com/subframe7536/maple-font/releases 装 Maple Mono NF CN
+# 可选中文回退：https://github.com/subframe7536/maple-font/releases
 fc-cache -fv
 fc-list | grep -i ioskeley
 ```
@@ -54,21 +55,30 @@ mv ~/.config/ghostty ~/.config/ghostty.bak 2>/dev/null
 git clone https://github.com/BubblePtr/ghostty.git ~/.config/ghostty
 ```
 
-**Linux 还要多一步**，避免共享配置里的 `Super+S/R/I` 抢走桌面环境快捷键：
+**Omarchy 还要多一步**，否则共享配置里的 `Cmd+S`（= Super+S）会和 Hyprland 的 scratchpad 抢键，而且配色跟不上桌面主题：
 
 ```bash
-ln -sf linux.conf ~/.config/ghostty/local.conf
+ln -sf omarchy.conf ~/.config/ghostty/local.conf
 ```
 
-`local.conf` 已被 gitignore。macOS 不用建这个文件。
+`linux.conf` 只是转到 `omarchy.conf` 的别名。`local.conf` 已被 gitignore。macOS 不用建这个文件。
 
-重启 Ghostty。已打开的窗口：macOS 按 `Cmd+R`，Linux 按 `Ctrl+Shift+,`。
+然后把字号从 Mac 的 16pt 拉回 Omarchy 的默认刻度（12px 桌面字 → 终端 9pt）：
+
+```bash
+omarchy display text size
+# 或指定：omarchy display text size 12
+```
+
+不要把 `font-size` / `font-family` 写进 `omarchy.conf`：`omarchy display text size` 和 `omarchy font set` 是直接 `sed` `config` 的。
+
+重启 Ghostty。已打开的窗口：macOS 按 `Cmd+R`；Omarchy 按 `Ctrl+Shift+,`，或跑 `omarchy-restart-terminal`。
 
 ## 快捷键
 
-`cmd` 和 `super` 在 Ghostty 里是同一个修饰键：macOS 是 Command，Linux 是 Super（Win 键）。
+`cmd` 和 `super` 在 Ghostty 里是同一个修饰键：macOS 是 Command，Omarchy 上 Super 归 Hyprland。
 
-下面默认写 macOS 和弦。Linux 启用 `linux.conf` 之后，自定义项以括号为准。
+下面默认写 macOS 和弦。Omarchy 启用 `omarchy.conf` 之后，不要用 Super 做 Ghostty 自定义键。
 
 ### 窗口管理
 
@@ -99,23 +109,28 @@ ln -sf linux.conf ~/.config/ghostty/local.conf
 
 ### 自定义快捷键
 
-| 操作 | macOS | Linux（`local.conf` → `linux.conf`） |
+| 操作 | macOS | Omarchy |
 |------|--------|--------|
-| 快速终端 (Quick Terminal) | `Cmd+S` | `Ctrl+Shift+S` |
-| 重载配置 | `Cmd+R` | `Ctrl+Shift+,`（系统默认） |
-| 检查器 | `Cmd+I` | 系统默认（一般是 `Ctrl+Shift+I`） |
+| 新开终端 | `Cmd+N` | `Super+Return`（Hyprland，不是 Ghostty） |
+| 下拉/临时终端 | `Cmd+S`（Ghostty Quick Terminal） | `Super+S` scratchpad |
+| 重载配置 | `Cmd+R` | `Ctrl+Shift+,` 或 `omarchy-restart-terminal` |
+| 检查器 | `Cmd+I` | `Ctrl+Shift+I` |
+| 复制/粘贴 | `Cmd+C` / `Cmd+V` | `Super+C` / `Super+V`（Omarchy 全局剪贴板） |
+| 分屏 | `Cmd+D` | `Ctrl+Shift+O`（旁）/ `Ctrl+Shift+E`（下） |
 
-## Linux 上已知限制
+## 对着 Omarchy 时要注意的
 
-这些不是配置写错，是 Ghostty 本身的平台差：
+对照的是 [basecamp/omarchy](https://github.com/basecamp/omarchy) 当前的 `config/ghostty/config` 和手册热键。
 
-- **Quick Terminal 只支持 Wayland**，X11 上 `toggle_quick_terminal` 无效。
-- **`global:` 全局快捷键只支持 macOS。** Linux 要在桌面环境里另绑（或用 `ghostty +toggle-quick-terminal`）。
-- **`background-blur` 在 Linux 上只有 KDE Plasma 生效。** GNOME / Sway / Hyprland 会忽略强度，只留透明度。
-- **`macos-option-as-alt`、`macos-icon` 在 Linux 上是空操作**，留在共享配置里没问题。
-- **`quick-terminal-animation-duration` 只在 macOS 实现。**
-- **同样 16pt，GTK 和 CoreText 的视觉大小不一样。** 到 Linux 后如果觉得偏大/偏小，在 `local.conf` 里单独改 `font-size`。
-- **着色器两边都能跑**（macOS Metal / Linux OpenGL），只是性能和 gamma 可能略有差别。
+- **先用 Omarchy 菜单装 Ghostty**，再克隆本仓库。只拷 `config` 不会写 `xdg-terminals.list`，`Super+Return` 可能还开着 Foot/Alacritty。
+- **不要覆盖掉主题这一行的效果。** `omarchy.conf` 会再加载 `~/.local/state/omarchy/current/theme/ghostty.conf`，换主题（`Super+Ctrl+Shift+Space`）终端颜色才会跟着走。共享的 `ghostty-theme` 在 Omarchy 上会被盖掉，这是刻意的。
+- **`Super+S` 是 scratchpad**，不是 Ghostty Quick Terminal。覆盖层会 `unbind` 共享配置里的 `cmd+s`。
+- **`async-backend = epoll` 必开**，否则 Ghostty 在 Hyprland 上会明显卡（上游 discussion #3224）。
+- **透明度交给 Hyprland**（`Super+Backspace`）。覆盖层把 `background-opacity` 设回 1，避免和桌面模糊叠两层。
+- **字号不要写进 overlay。** Mac 上 16pt 正常；Omarchy 默认刻度是 9pt。用 `omarchy display text size` 改 `config` 里那一行。
+- **`omarchy font set "…"` 会 sed 掉所有 `font-family =` 行**，两条回退字体会变成同一个家族。要回退就在改完字体后再手写第二行。
+- **`macos-*` 在 Linux 上是空操作**，留在共享配置里没问题。
+- 着色器（bloom / 光标）在 Hyprland 上能跑，只是吃 GPU；卡的话在 `config` 里注释掉 `custom-shader`。
 
 ## 着色器
 

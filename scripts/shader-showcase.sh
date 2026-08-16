@@ -43,6 +43,10 @@ reload_config() {
                 || osascript -e 'tell application "System Events" to keystroke "," using {command down, shift down}' 2>/dev/null
             ;;
         Linux)
+            if command -v omarchy-restart-terminal >/dev/null 2>&1; then
+                omarchy-restart-terminal
+                return 0
+            fi
             if systemctl --user reload app-com.mitchellh.ghostty.service 2>/dev/null; then
                 return 0
             fi
