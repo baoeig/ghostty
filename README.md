@@ -1,6 +1,6 @@
 # Ghostty 终端配置
 
-深色半透明主题 + Bloom 辉光 + 光标拖影。当前字体是 [Ioskeley Mono](https://github.com/ahatem/IoskeleyMono)（Iosevka × Berkeley），缺字时回退到 Maple Mono NF CN。
+深色半透明主题 + Bloom 辉光 + 光标拖影。当前字体是 [Ioskeley Mono](https://github.com/ahatem/IoskeleyMono)（Iosevka × Berkeley），缺字时回退到 [更纱黑体 Sarasa](https://github.com/be5invis/Sarasa-Gothic) 的 Nerd Font 补丁版（思源黑体骨架 + Nerd Font 图标）。
 
 同一份 `config` 在 macOS 和 [Omarchy](https://omarchy.org)（Arch + Hyprland）上都能用。不设置 `command`，启动哪个 shell 由 `$SHELL` / 系统用户项决定。
 
@@ -13,7 +13,7 @@
 | 项 | 值 |
 |---|---|
 | Ghostty | 1.3.2 tip |
-| 字体 | `Ioskeley Mono` → `Maple Mono NF CN`，16pt |
+| 字体 | `Ioskeley Mono` → `Sarasa Mono SC Nerd Font`，16pt |
 | 光标 | block |
 | 背景 | 透明度 `0.78` + blur |
 | 着色器 | `bloom060`、`cursor_blaze_no_trail`、`cursor_smear` |
@@ -29,23 +29,54 @@
 
 ### 2. 安装字体
 
-主字体是 [Ioskeley Mono](https://github.com/ahatem/IoskeleyMono)，中文回退是 [Maple Mono NF CN](https://github.com/subframe7536/maple-font)。两边都有包，不用自己 curl。
+主字体是 [Ioskeley Mono](https://github.com/ahatem/IoskeleyMono)，中文/图标回退是 [Sarasa Gothic](https://github.com/be5invis/Sarasa-Gothic) 的 Nerd Font 补丁版（[jonz94/Sarasa-Gothic-Nerd-Fonts](https://github.com/jonz94/Sarasa-Gothic-Nerd-Fonts)）。两边都有包，不用自己 curl。
 
 **macOS（Homebrew）：**
 
 ```bash
-brew install --cask font-ioskeley-mono font-maple-mono-nf-cn
+brew install --cask font-ioskeley-mono font-sarasa-gothic
 ```
 
-**Omarchy：** 官方 extra 里没有这两款，AUR 有。菜单 **Install → Package** 搜包名，或：
+`font-sarasa-gothic` 是官方 SuperTTC，含 `Sarasa Mono SC` 等全部变体，但**没有 Nerd Font 图标**，图标会随 macOS 系统回退。想和仓库配置完全一致（`Sarasa Mono SC Nerd Font`），从 [jonz94 的 Releases](https://github.com/jonz94/Sarasa-Gothic-Nerd-Fonts/releases) 下载 `sarasa-nerd-font-ttc.zip` 手动安装。
+
+**Omarchy：** 官方 extra 里没有这些，AUR 有。菜单 **Install → Package** 搜包名，或：
 
 ```bash
-omarchy-pkg-add ttf-ioskeley-mono maple-mono-nf-cn
+omarchy pkg aur add ttf-ioskeley-mono-unhinted ttf-sarasa-gothic-nerd-fonts
 ```
 
-HiDPI 更建议 unhinted：`ttf-ioskeley-mono-unhinted`、`maple-mono-nf-cn-unhinted`。装完可用 `omarchy font set "Ioskeley Mono"`（它会 `sed` 本仓库 `config` 里的 `font-family` 行）。
+HiDPI 建议 Ioskeley 用 unhinted（如上）；Sarasa 只有 hinted 包，HiDPI 下差别无感。
 
-Omarchy 自带的 **Install → Style → Font** 只有 Cascadia / Meslo / Fira / Victor / Iosevka，没有 Ioskeley。
+**Omarchy UI 字体（可选，让桌面中文与终端一致）：**
+
+```bash
+omarchy pkg aur add ttf-sarasa-ui-sc
+```
+
+然后把 `~/.config/fontconfig/fonts.conf` 写成：
+
+```xml
+<?xml version="1.0"?>
+<!DOCTYPE fontconfig SYSTEM "fonts.dtd">
+<fontconfig>
+  <match target="pattern">
+    <test name="family"><string>Liberation Sans</string></test>
+    <edit name="family" mode="prepend" binding="strong">
+      <string>Sarasa Gothic SC</string>
+    </edit>
+  </match>
+  <match target="pattern">
+    <test name="family"><string>JetBrainsMono Nerd Font</string></test>
+    <edit name="family" mode="prepend" binding="strong">
+      <string>Sarasa Mono SC Nerd Font</string>
+    </edit>
+  </match>
+</fontconfig>
+```
+
+Omarchy 的 `50-omarchy.conf` 会先把 `sans-serif` / `monospace` assign 成 `Liberation Sans` / `JetBrainsMono Nerd Font`，所以要匹配替换后的名字。装完 `fc-cache -f`，再 `omarchy restart shell`。
+
+Omarchy 自带的 **Install → Style → Font** 只有 Cascadia / Meslo / Fira / Victor / Iosevka，没有 Ioskeley 和 Sarasa。
 
 ### 3. 部署配置
 

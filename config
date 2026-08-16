@@ -90,7 +90,7 @@ window-padding-y = 6,0
 
 font-family = "Ioskeley Mono"
 # CJK / Nerd fallback when the primary face is missing a glyph.
-font-family = "Maple Mono NF CN"
+font-family = "Sarasa Mono SC Nerd Font"
 font-size = 16
 
 cursor-style = block
