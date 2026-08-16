@@ -1,28 +1,10 @@
-# To get the default values
-# ghostty +show-config --default --docs > ~/github/dotfiles-latest/ghostty/config-default
+# Shared Ghostty config (macOS + Linux).
+# Reload: Cmd+Shift+, (macOS) / Ctrl+Shift+, (Linux), or Cmd+R on this Mac.
+# Linux: `ln -sf linux.conf local.conf` so Super+S/R/I don't fight the compositor.
 
-# To get syntax highlighting in neovim, see
-# ~/github/dotfiles-latest/neovim/neobean/lua/plugins/ghostty.lua
-
-# HACK: How to setup the Ghostty terminal, is it just hype? READ PINNED MESSAGE
-# https://youtu.be/rCiq5CyFFhA
-
-# No way of reloading config via command yet, only via keymap cmd+shift+,
-# Created a script to do it so that its reloaded with my colorscheme selector
-
-# Additional configuration files to read. This configuration can be repeated
-# to read multiple configuration files. Configuration files themselves can
-# load more configuration files. Paths are relative to the file containing the
-# `config-file` directive. For command-line arguments, paths are relative to
-# the current working directory.
-# 
-# Prepend a ? character to the file path to suppress errors if the file does
-# not exist. If you want to include a file that begins with a literal ?
-# character, surround the file path in double quotes (").
-# 
-# Cycles are not allowed. If a cycle is detected, an error will be logged and
-# the configuration file will be ignored.
 config-file = ghostty-theme
+# Optional per-machine / per-OS overrides. Not committed (see linux.conf).
+config-file = ?local.conf
 
 # Some shaders can be found in this repo, they're usually uploaded to discord
 # https://github.com/hackrmomo/ghostty-shaders
@@ -65,45 +47,7 @@ custom-shader = shaders/cursor_blaze_no_trail.glsl
 custom-shader = shaders/cursor_smear.glsl
 # custom-shader = shaders/cursor_smear_fade.glsl
 
-# The command to run, usually a shell. If this is not an absolute path, it'll
-# be looked up in the `PATH`. If this is not set, a default will be looked up
-# from your system. The rules for the default lookup are:
-# 
-#   * `SHELL` environment variable
-# 
-#   * `passwd` entry (user information)
-# 
-# This can contain additional arguments to run the command with. If additional
-# arguments are provided, the command will be executed using `/bin/sh -c`.
-# Ghostty does not do any shell command parsing.
-# 
-# If you're using the `ghostty` CLI there is also a shortcut to run a command
-# with arguments directly: you can use the `-e` flag. For example: `ghostty -e
-# fish --with --custom --args`. The `-e` flag automatically forces some
-# other behaviors as well:
-# 
-#   * `gtk-single-instance=false` - This ensures that a new instance is
-#     launched and the CLI args are respected.
-# 
-#   * `quit-after-last-window-closed=true` - This ensures that the Ghostty
-#     process will exit when the command exits. Additionally, the
-#     `quit-after-last-window-closed-delay` is unset.
-# ############################################################################ 
-# The following command checks if tmux is installed.
-# If tmux is installed, it automatically attaches to an existing tmux session.
-# If no tmux session exists, a new one is created.
-# If tmux is not installed, it simply starts zsh without tmux.
-#
-# For this to work properly, you need to make sure that your shell is configured
-# for homebrew, so you should have this line:
-# eval "$(/opt/homebrew/bin/brew shellenv)"
-# In your ~/.zprofile file
-# If you don't have that line, or if the file doesn't exist, run this:
-# echo '' >>~/.zprofile && echo '# Configure shell for brew' >>~/.zprofile && echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >>~/.zprofile && eval "$(/opt/homebrew/bin/brew shellenv)"
-#
-# This assumes you installed tmux through brew if using macos
-# command = zsh --login -c "if command -v tmux >/dev/null 2>&1; then tmux attach || tmux; else zsh; fi"
-# command = zsh --login -c "if command -v tmux >/dev/null 2>&1; then $HOME/github/dotfiles-latest/tmux/tools/prime/tmux-sessionizer.sh $HOME/github/dotfiles-latest || (tmux attach 2>/dev/null || tmux); else exec zsh; fi"
+# No custom `command`: use $SHELL / passwd so the same file works on macOS and Linux.
 
 # Horizontal window padding. This applies padding between the terminal cells
 # and the left and right window borders. The value is in points, meaning that
@@ -144,6 +88,8 @@ window-padding-x = 4,2
 window-padding-y = 6,0
 
 font-family = "Ioskeley Mono"
+# CJK / Nerd fallback when the primary face is missing a glyph.
+font-family = "Maple Mono NF CN"
 font-size = 16
 
 cursor-style = block
@@ -225,16 +171,6 @@ quick-terminal-animation-duration = 0.08
 
 keybind = super+i=inspector:toggle
 keybind = super+r=reload_config
-
-# This doesn't work when in tmux, if outside tmux the regular ctrl+l works
-# keybind = super+k=clear_screen
-
-# When not running tmux I see what C-enter sends
-# I can do `/bin/cat -v` and then pressed C-enter
-# Ghostty sends: ^[[27;5;13~
-# 
-# The problem is that when I run tmux, nothing is sent, so I'm sending those
-# keys in my tmux.conf file
 
 # Customize the macOS app icon.
 # 

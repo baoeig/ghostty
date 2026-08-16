@@ -34,9 +34,25 @@ SHADERS=(
 # 备份原始配置
 cp "$CONFIG" "$CONFIG.showcase.bak"
 
-# 通过 AppleScript 模拟按键触发 Ghostty 重新加载配置
+# Reload the running Ghostty instance after rewriting config.
+# macOS: send the default reload chord. Linux: systemd unit or SIGUSR2.
 reload_config() {
-    osascript -e 'tell application "System Events" to keystroke "," using {command down, shift down}' 2>/dev/null
+    case "$(uname -s)" in
+        Darwin)
+            osascript -e 'tell application "System Events" to keystroke "r" using {command down}' 2>/dev/null \
+                || osascript -e 'tell application "System Events" to keystroke "," using {command down, shift down}' 2>/dev/null
+            ;;
+        Linux)
+            if systemctl --user reload app-com.mitchellh.ghostty.service 2>/dev/null; then
+                return 0
+            fi
+            # Ghostty reloads config on SIGUSR2; any other signal can kill it.
+            pkill -USR2 -x ghostty 2>/dev/null || true
+            ;;
+        *)
+            echo "reload: unsupported OS $(uname -s); press your reload keybind" >&2
+            ;;
+    esac
 }
 
 restore() {
